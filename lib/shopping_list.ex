@@ -18,9 +18,26 @@ defmodule ShoppingList do
     GenServer.call(pid, {:add, item})
   end
 
+  def remove(pid, item) do
+    GenServer.cast(pid, {:remove, item})
+  end
+  def stop(pid) do
+    GenServer.stop(pid, :normal, :infinity)
+  end
   # Server
+  def terminate(_reason, list) do
+    IO.puts("We are all done shopping.")
+    IO.inspect(list)
+    :ok
+  end
   def init(state) do
     {:ok, state}
+  end
+
+  def handle_cast({:remove, item},  state) do
+    IO.puts("Removing #{item} from the shopping list")
+    updated_state = List.delete(state, item)
+    {:noreply, updated_state}
   end
 
   def handle_cast(item, state) do
